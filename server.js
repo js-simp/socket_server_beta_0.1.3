@@ -28,12 +28,6 @@ io.on('connection', (socket) => {
 		canvas = getDataFromClient;
      });
 
-	socket.on('chat-message',(msg)=> {
-		console.log(msg)
-		io.emit('chat message', msg);
-		chat.push(msg);
-		
-	  });
     
     //  socket.to('room1').emit('I am room 1 from server');
 	// io.to("room 237").emit("a new user has joined the room"); 
@@ -71,6 +65,7 @@ socket.on("join_room",(room) => {
 })
 
 socket.on('image', (msg)=>{
+	console.log(msg.src, msg.page, msg.title);
 	let allRooms = socket.rooms;
 	let clientRooms = Array.from(allRooms)
 	for(let i=0; i<=clientRooms.length; i++) {
@@ -78,11 +73,11 @@ socket.on('image', (msg)=>{
 	  }
 })
 
-  socket.on("message", (msg) => {
+  socket.on("chat-message", (msg) => {
 	let allRooms = socket.rooms;
 	let clientRooms = Array.from(allRooms)
 	for(let i=0; i<=clientRooms.length; i++) {
-		socket.to(clientRooms[i]).emit("message",msg);
+		socket.to(clientRooms[i]).emit("chat-message",msg);
 	  }
   });
 
