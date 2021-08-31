@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 
 const io = require("socket.io")(server, {
 	cors: {
-		origin: "https:rtcsignalling-63cad.web.app",
+		origin: "https://rtcsignalling-63cad.web.app",
 		methods: ["GET", "POST"],
 		allowedHeaders: ["my-custom-header"],
 		credentials: true
