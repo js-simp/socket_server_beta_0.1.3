@@ -5,13 +5,14 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
+let timestamp = 0;
 const timeoutObj = setInterval(() => {
 	timestamp += 100;
   }, 100);
   
 const io = require("socket.io")(server, {
 	cors: {
-		origin: process.env.APP_SERVER,
+		origin: "http://localhost:3000",
 		methods: ["GET", "POST"],
 		allowedHeaders: ["my-custom-header"],
 		credentials: true
@@ -42,6 +43,7 @@ io.on('connection', (socket) => {
 
 	socket.on('drawing',(msg)=> {
 		// var arr = ["room1","room2"],push();
+		console.log(msg);
 		let allRooms = socket.rooms;
 		let clientRooms = Array.from(allRooms)
 		//iterate through the rooms and emmit draw to all the rooms in the array
