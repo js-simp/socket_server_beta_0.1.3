@@ -5,6 +5,10 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
+const timeoutObj = setInterval(() => {
+	timestamp += 100;
+  }, 100);
+  
 const io = require("socket.io")(server, {
 	cors: {
 		origin: process.env.APP_SERVER,
