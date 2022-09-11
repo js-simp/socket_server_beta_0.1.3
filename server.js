@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const fs = require('fs');// for writing eventlog
 const app = express();
 const server = http.createServer(app);
 
@@ -30,7 +31,13 @@ io.on('connection', (socket) => {
 
 	socket.on('disconnect', () => {
 		console.log('Client disconnected');
-		console.log(eventlog);
+		// console.log(eventlog);
+ 
+	// writeFile function with filename, content and callback function
+	fs.writeFile('sessionId.json', JSON.stringify(eventlog), function (err) {
+  		if (err) throw err;
+  		console.log('File is created successfully.');
+		});
 		 con = "connected"});
 
 	socket.emit("me", socket.id);
