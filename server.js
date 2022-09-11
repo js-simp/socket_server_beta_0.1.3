@@ -5,10 +5,11 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
-let timestamp = 0;
-const timeoutObj = setInterval(() => {
-	timestamp += 100;
-  }, 100);
+
+
+async function save_events(msg, timestamp, eventlog) {
+	eventlog.push({msg, timestamp});
+}
   
 const io = require("socket.io")(server, {
 	cors: {
@@ -21,9 +22,15 @@ const io = require("socket.io")(server, {
 
 io.on('connection', (socket) => {
 	// console.log('Client connected'+socket.id);
+	let timestamp = 0;
+	let eventlog = [];
+	const timeoutObj = setInterval(() => {
+	timestamp += 10; 
+  	}, 10); //logging every 1/100th of a second
 
 	socket.on('disconnect', () => {
 		console.log('Client disconnected');
+		console.log(eventlog);
 		 con = "connected"});
 
 	socket.emit("me", socket.id);
@@ -43,7 +50,7 @@ io.on('connection', (socket) => {
 
 	socket.on('drawing',(msg)=> {
 		// var arr = ["room1","room2"],push();
-		console.log(msg);
+		save_events(msg, timestamp, eventlog); //saving the events as it comes asynchronously
 		let allRooms = socket.rooms;
 		let clientRooms = Array.from(allRooms)
 		//iterate through the rooms and emmit draw to all the rooms in the array
