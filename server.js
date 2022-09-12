@@ -23,6 +23,7 @@ const io = require("socket.io")(server, {
 
 io.on('connection', (socket) => {
 	// console.log('Client connected'+socket.id);
+	// socket.pipe(process.stdout);
 	let timestamp = 0;
 	let eventlog = [];
 	const timeoutObj = setInterval(() => {
