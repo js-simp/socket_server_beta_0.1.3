@@ -23,6 +23,7 @@ const io = require("socket.io")(server, {
 
 io.on('connection', (socket) => {
 	// console.log('Client connected'+socket.id);
+	let my_room = ''; //declaring designated room for session
 	// socket.pipe(process.stdout);
 	let timestamp = 0;
 	let eventlog = [];
@@ -49,7 +50,7 @@ io.on('connection', (socket) => {
      });
 
 	socket.on("join_room",(room) => {
-
+		my_room = room; //assigning designated room for session
 		socket.join(room);//ok
 		// console.log("joined room is -"+room);
 		socket.broadcast.emit("join_room",room);//sent all clent
@@ -59,39 +60,28 @@ io.on('connection', (socket) => {
 	socket.on('drawing',(msg)=> {
 		// var arr = ["room1","room2"],push();
 		save_events(msg, timestamp, eventlog); //saving the events as it comes asynchronously
-		let allRooms = socket.rooms;
-		let clientRooms = Array.from(allRooms)
-		//iterate through the rooms and emmit draw to all the rooms in the array
-		for(let i=0; i<=clientRooms.length; i++) {
-			socket.to(clientRooms[i]).emit("drawing",msg);
-		}
+	
+		socket.to(my_room).emit("drawing",msg);
 
 	});  
 
 	socket.on('text', (msg)=> {
-		let allRooms = socket.rooms;
-		let clientRooms = Array.from(allRooms)
-		for(let i=0; i<=clientRooms.length; i++) {
-			socket.to(clientRooms[i]).emit("text",msg);
-		}
+		
+		socket.to(my_room).emit("text",msg);
 
 	})
 
 	socket.on('image', (msg)=>{
 		console.log(msg.src, msg.page, msg.title);
-		let allRooms = socket.rooms;
-		let clientRooms = Array.from(allRooms)
-		for(let i=0; i<=clientRooms.length; i++) {
-			socket.to(clientRooms[i]).emit("image",msg);
-		}
+		
+		socket.to(my_room).emit("image",msg);
+		
 	})
 
 	socket.on("chat-message", (msg) => {
-		let allRooms = socket.rooms;
-		let clientRooms = Array.from(allRooms)
-		for(let i=0; i<=clientRooms.length; i++) {
-			socket.to(clientRooms[i]).emit("chat-message",msg);
-		}
+
+		socket.to(my_room).emit("chat-message",msg);
+		
 	});
 
   });
