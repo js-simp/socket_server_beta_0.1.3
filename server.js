@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 
 const io = require("socket.io")(server, {
 	cors: {
-		origin: process.env.APP_SERVER,
+		origin: 'https://cloudlearnx-classroom-dev.onrender.com',
 		methods: ["GET", "POST"],
 		allowedHeaders: ["my-custom-header"],
 		credentials: true
