@@ -8,9 +8,11 @@ const PORT = process.env.PORT || 5000;
 
 
 
-async function save_events(msg, timestamp, eventlog) {
-	eventlog.push({msg, timestamp});
-}
+// async function save_events(msg, timestamp) {
+// 	eventlog.push({msg, timestamp});
+// }
+
+//socket server instance
   
 const io = require("socket.io")(server, {
 	cors: {
@@ -21,15 +23,11 @@ const io = require("socket.io")(server, {
 	  }
 });
 
+//connection is the event triggered when a new socket instance is created
 io.on('connection', (socket) => {
-	// console.log('Client connected'+socket.id);
+	console.log('Client connected'+socket.id);
 	let my_room = ''; //declaring designated room for session
 	// socket.pipe(process.stdout);
-	let timestamp = 0;
-	let eventlog = [];
-	const timeoutObj = setInterval(() => {
-	timestamp += 10; 
-  	}, 10); //logging every 1/100th of a second
 
 	socket.on('disconnect', () => {
 		console.log('Client disconnected');
@@ -59,8 +57,13 @@ io.on('connection', (socket) => {
 
 	socket.on('drawing',(msg)=> {
 		// var arr = ["room1","room2"],push();
-		save_events(msg, timestamp, eventlog); //saving the events as it comes asynchronously
-	
+		// save_events(msg, timestamp, eventlog); //saving the events as it comes asynchronously
+		let {x0, x1, y0, y1, toolName, color} = msg;
+		fs.appendFile('sessionId.txt', JSON.stringify({x0, x1, y0, y1, toolName, color, time : Date.now()}) + '\n', 
+		function (err) {
+			if (err) throw err;
+			// console.log('Saved!');
+		  });
 		socket.to(my_room).emit("drawing",msg);
 
 	});  
