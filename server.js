@@ -49,6 +49,14 @@ io.on('connection', (socket) => {
 
 	socket.on("join_room",(room) => {
 		my_room = room; //assigning designated room for session
+		if (!fs.existsSync(`${my_room}.txt`)) {
+			//file doesn't exist therefore create file
+			fs.appendFile(`${my_room}.txt`, JSON.stringify({startTime : Date.now()}) + '\n',
+			function (err) {
+				if (err) throw err;
+				// console.log('Saved!');
+			});
+		}
 		socket.join(room);//ok
 		// console.log("joined room is -"+room);
 		socket.broadcast.emit("join_room",room);//sent all clent
@@ -59,7 +67,7 @@ io.on('connection', (socket) => {
 		// var arr = ["room1","room2"],push();
 		// save_events(msg, timestamp, eventlog); //saving the events as it comes asynchronously
 		let {x0, x1, y0, y1, toolName, color} = msg;
-		fs.appendFile('sessionId.txt', JSON.stringify({x0, x1, y0, y1, toolName, color, time : Date.now()}) + '\n', 
+		fs.appendFile(`${my_room}.txt`, JSON.stringify({x0, x1, y0, y1, toolName, color, time : Date.now()}) + '\n', 
 		function (err) {
 			if (err) throw err;
 			// console.log('Saved!');
@@ -69,7 +77,12 @@ io.on('connection', (socket) => {
 	});  
 
 	socket.on('text', (msg)=> {
-		
+		let {x0,y0,text,color} = msg;
+		fs.appendFile(`${my_room}.txt`, JSON.stringify({x0, y0,text, color, time : Date.now()}) + '\n', 
+		function (err) {
+			if (err) throw err;
+			// console.log('Saved!');
+		  });
 		socket.to(my_room).emit("text",msg);
 
 	})
@@ -86,6 +99,14 @@ io.on('connection', (socket) => {
 		socket.to(my_room).emit("chat-message",msg);
 		
 	});
+
+	socket.on("endSession", () => {
+		fs.appendFile(`${my_room}.txt`, JSON.stringify({endtime : Date.now()}) + '\n', 
+		function (err) {
+			if (err) throw err;
+			// console.log('Saved!');
+		  });
+	})
 
   });
 
