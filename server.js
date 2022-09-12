@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
 		// for(let i=0; i<=clientRooms.length; i++) {
 		// 	socket.to(clientRooms[i]).emit("drawing",msg);
 		// }
-		socket.to(room).emit("drawing", msg);
+		socket.to(`${room}`).emit("drawing", msg);
 
 	});  
 
