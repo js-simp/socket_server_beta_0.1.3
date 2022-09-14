@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 
 
 
-async function get_events(sessionID, socket, callback) {
+async function get_events(sessionID, callback) {
 	const fileStream = fs.createReadStream(`${sessionID}.txt`);
   
 	const rl = readline.createInterface({
@@ -40,10 +40,9 @@ async function get_events(sessionID, socket, callback) {
 	}
 	  callback({
 		status: "ok",
-		duration : end - start
+		duration : end - start,
+		events : event_array
 	  });	
-
-	  socket.on("play", ()=> {console.log("Time to play!")});
 
 	// console.log(event_array);
   }
@@ -134,7 +133,7 @@ io.on('connection', (socket) => {
 
 	socket.on("regen", (sessionID, callback) => {
 		console.log(`We got to regenerate session ${sessionID}`);
-		get_events(sessionID, socket, callback);
+		get_events(sessionID, callback);
 		
 	})
 
